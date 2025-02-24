@@ -17,7 +17,7 @@ exports.createTweet = async (req, res) => {
 };
 
 // Get tweets by user ID
-exports.getTweets = async (req, res) => {
+exports.getTweetsbyId = async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -48,6 +48,36 @@ exports.updateTweet = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+
+exports.getTweets = async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        t.id AS tweet_id,
+        t.text AS tweet_text,
+        t.createdAt AS tweet_created_at,
+        t.hashtags,
+        t.imagePath,
+        p.id AS user_id,
+        p.username,
+        COUNT(l.id) AS like_count,
+        ARRAY_AGG(l.userId) AS liked_by_users
+      FROM "Tweet" t
+      JOIN "Profile" p ON t.userId = p.id
+      LEFT JOIN "Like" l ON t.id = l.tweetId
+      GROUP BY t.id, p.id
+      ORDER BY t.createdAt DESC;
+    `;
+    
+    const result = await pool.query(query);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
 
 // Delete a tweet
 exports.deleteTweet = async (req, res) => {

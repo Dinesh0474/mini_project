@@ -11,6 +11,7 @@ import SignUp from './components/signup';
 import TwitterProfile from './components/TwitterProfile';
 import Home from './pages/Home';
 import Explore from './pages/Explore';
+import Post from './components/Post';
 // import Home from './components/Home';
 
 
@@ -27,6 +28,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/post" element={<Post />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/twitterprofile" element={<TwitterProfile />} />
           <Route path="*" element={<Navigate to="/" replace />} />

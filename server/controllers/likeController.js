@@ -2,7 +2,9 @@ const pool = require('../models/db');
 
 // Like a tweet
 exports.likeTweet = async (req, res) => {
-  const { userId, tweetId } = req.body;
+  const userId = req.body.userId;
+  const  tweetId  = req.params;
+console.log(userId,tweetId);
 
   try {
     const result = await pool.query(

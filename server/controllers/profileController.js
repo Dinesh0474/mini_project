@@ -56,6 +56,26 @@ exports.getProfileById = async (req, res) => {
   }
 };
 
+// Search profiles based on query
+exports.searchProfiles = async (req, res) => {
+  const { q } = req.query;
+  console.log(q);
+ 
+ 
+  try {
+    const result = await pool.query(
+      'SELECT * FROM "Profile" WHERE username ILIKE $1 LIMIT 5',
+      [`%${q}%`]
+    );
+   
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+ 
+
 // Update a profile
 exports.updateProfile = async (req, res) => {
   const { id } = req.params;
