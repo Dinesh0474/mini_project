@@ -28,10 +28,11 @@ function Login() {
 
       if (response.ok) {
         // Successfully logged in
-        console.log('Logged in successfully:', data);
+        console.log('Logged in successfully:', data.data);
+        localStorage.setItem("user_id",data.data.user.id);
         data.data.token && localStorage.setItem('token', data.data.token);
         // Redirect to the user profile page after successful login
-        navigate('/twitterprofile');
+        navigate('/home');
       } else {
         // Show error message from the server
         setErrorMessage(data.message || 'Login failed. Please try again.');

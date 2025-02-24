@@ -9,6 +9,9 @@ import SignUp from './components/signup';
 // import Home from './components/Home';
 // import Profile from './components/Profile';
 import TwitterProfile from './components/TwitterProfile';
+import Home from './pages/Home';
+import Explore from './pages/Explore';
+// import Home from './components/Home';
 
 
 
@@ -23,6 +26,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
           <Route path="/twitterprofile" element={<TwitterProfile />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
