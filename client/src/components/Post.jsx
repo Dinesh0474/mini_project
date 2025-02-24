@@ -11,7 +11,7 @@ console.log(user_id);
   const [comment, setComment] = useState(0);
 const likePost= async(tweetId)=>{
     try{
-      console.log("tweetId",tweetId);
+      console.log("tzzzweetssssssId",tweetId);
       
         setLike(like=>like+1);
         const response=await axios.post(`http://localhost:3000/likes/`,{
