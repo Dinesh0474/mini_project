@@ -113,6 +113,45 @@ exports.getProfileById = async (req, res) => {
   }
 };
 
+exports.getMainProfileById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Query profile details
+    const profileResult = await pool.query('SELECT id, username, fullName FROM "Profile" WHERE id = $1', [id]);
+    if (profileResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+   
+    const profile = profileResult.rows[0];
+ 
+    // Get followers count
+    const followersCountResult = await pool.query('SELECT COUNT(*) FROM "Follow" WHERE followingId = $1', [id]);
+    const followersCount = parseInt(followersCountResult.rows[0].count);
+ 
+    // Get following count
+    const followingCountResult = await pool.query('SELECT COUNT(*) FROM "Follow" WHERE followerId = $1', [id]);
+    const followingCount = parseInt(followingCountResult.rows[0].count);
+ 
+    // Get posts count
+    const postsCountResult = await pool.query('SELECT COUNT(*) FROM "Tweet" WHERE userId = $1', [id]);
+    const postsCount = parseInt(postsCountResult.rows[0].count);
+ 
+    
+    // Respond with the data
+    res.status(200).json({
+      id: profile.id,
+      name: profile.fullName,
+      username: profile.username,
+      followersCount: followersCount,
+      followingCount: followingCount,
+      postCount: postsCount
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // Search profiles based on query
 exports.searchProfiles = async (req, res) => {
   const { q } = req.query;
