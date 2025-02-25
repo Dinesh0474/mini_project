@@ -1,17 +1,14 @@
 
 import React, { Profiler } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
-
-
-import Login from './components/login';
-import SignUp from './components/signup';
-
-// import Home from './components/Home';
-// import Profile from './components/Profile';
-import TwitterProfile from './components/TwitterProfile';
+import Login from './pages/Login';
+import SignUp from './pages/Signup';
 import Home from './pages/Home';
+import Post from './pages/Post';
 import Explore from './pages/Explore';
-import Post from './components/Post';
+import TwitterProfile from './pages/TwitterProfile';
+
+
 // import Home from './components/Home';
 
 

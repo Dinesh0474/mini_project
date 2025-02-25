@@ -133,8 +133,8 @@ const likePost= async(tweetId)=>{
                 <span className="text-gray-400">{post.shares || "0"}</span>
               </div>
               <div className="flex items-center space-x-4 cursor-pointer" onClick={()=>likePost(post.tweet_id)}>
-                <i className="ri-heart-line text-gray-400"></i>
-                <span className="text-gray-400">{post.likes || "0"}</span>
+                <i className="ri-heart-line text-red-500"></i>
+                <span className="text-gray-400">{like}</span>
               </div>
               <div className="flex items-center space-x-4">
                 <i className="ri-eye-line text-gray-400"></i>
