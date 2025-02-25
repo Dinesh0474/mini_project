@@ -2,12 +2,12 @@ const pool = require('../models/db');
 
 // Create a reply
 exports.createReply = async (req, res) => {
-  const { userId, tweetId, text, replyId } = req.body;
+  const { userId, tweetId, text } = req.body;
 
   try {
     const result = await pool.query(
-      'INSERT INTO "Reply" (userId, tweetId, text, replyId) VALUES ($1, $2, $3, $4) RETURNING *',
-      [userId, tweetId, text, replyId]
+      'INSERT INTO "Reply" (userId, tweetId, text) VALUES ($1, $2, $3) RETURNING *',
+      [userId, tweetId, text]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
