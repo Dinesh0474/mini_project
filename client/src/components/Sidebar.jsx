@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import axios from 'axios'; // Make sure to install axios
 import { useNavigate } from 'react-router-dom';
+import { Gamepad2 } from 'lucide-react';
 
 const SideBar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -131,6 +132,10 @@ const SideBar = () => {
             <i className="ri-user-line text-xl mr-3"></i>
             <span className="text-lg">Profile</span>
           </div>
+          <a href='/game' className="flex items-center text-gray-400 hover:text-white cursor-pointer">
+            <Gamepad2 className='mr-3' />
+            <span className="text-lg">Game</span>
+          </a>
         </div>
       </div>
     </div>
