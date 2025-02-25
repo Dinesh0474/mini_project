@@ -4,6 +4,7 @@ import pool from '../models/db.js';
 const validateToken = async (req, res, next) => {
   try {
     let token;
+    // Authorization: `Bearer ${token}`
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")

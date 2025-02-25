@@ -96,122 +96,81 @@ exports.deleteTweet = async (req, res) => {
 };
 
 
-// Get tweet details with likes count
-// In your tweetController.js
-
-// exports.getTweetDetail = async (req, res) => {
-//   const tweetId = req.params.tweetId; // Access tweetId from URL parameter
-
-//   // Validate if tweetId is a valid UUID (basic check)
-//   if (!isValidUUID(tweetId)) {
-//     return res.status(400).json({ error: 'Invalid tweetId format' });
-//   }
-
-//   try {
-//     const query = `
-//       SELECT 
-//         t.id AS tweetId, 
-//         t.text AS tweetText, 
-//         t.createdAt AS tweetCreatedAt,
-
-//         -- Count the number of likes for the tweet
-//         COUNT(l.id) AS likeCount
-//       FROM "Tweet" t
-//       LEFT JOIN "Like" l ON t.id = l.tweetId
-//       WHERE t.id = $1::uuid
-//       GROUP BY t.id;
-//     `;
-
-//     const result = await pool.query(query, [tweetId]);
-
-//     if (result.rows.length === 0) {
-//       return res.status(404).json({ error: 'Tweet not found or no likes for this tweet' });
-//     }
-
-//     const tweet = result.rows[0];
-//     console.log(tweet);
-
-//     // Construct the final response with like count
-//     const response = {
-//       tweet: {
-//         id: tweet.tweetid,
-//         text: tweet.tweettext,
-//         createdAt: tweet.tweetcreatedat
-//       },
-//       likeCount: tweet.likecount // The count of likes for the tweet
-//     };
-    
-//     res.status(200).json(response);
-
-//   } catch (err) {
-//     console.error('Error fetching tweet like details:', err);
-//     res.status(500).json({ error: 'Failed to fetch tweet like details' });
-//   }
-// };
 
 
 
-exports.getTweetDetail = async (req, res) => {
-  const tweetId = req.params.tweetId; // Access tweetId from URL parameter
-
-  // Validate if tweetId is a valid UUID (basic check)
-  if (!isValidUUID(tweetId)) {
-    return res.status(400).json({ error: 'Invalid tweetId format' });
-  }
-
+exports.getAllTweetsWithReplies = async (req, res) => {
   try {
     const query = `
       SELECT 
         t.id AS tweetId, 
         t.text AS tweetText, 
         t.createdAt AS tweetCreatedAt,
+        t.userId AS tweetUserId,  -- tweet's user ID
+        
+        -- Get the username of the tweet's author by joining Profile table
+        p.username AS tweetUserName,  -- tweet's username
+        
+        t.imagePath AS tweetImage,  -- Include image stored in the database
         
         -- Count the number of likes for the tweet
-        COUNT(l.id) AS likeCount,
+        (SELECT COUNT(*) FROM "Like" WHERE tweetId = t.id) AS likeCount,
 
-        -- Fetching reply details for the tweet
+        -- Reply details (user info included)
         r.id AS replyId,
         r.text AS replyText,
         r.createdAt AS replyCreatedAt,
         r.userId AS replyUserId,
-        p.username AS replyUserName
+        rp.username AS replyUserName
 
       FROM "Tweet" t
-      LEFT JOIN "Like" l ON t.id = l.tweetId
       LEFT JOIN "Reply" r ON t.id = r.tweetId
-      LEFT JOIN "Profile" p ON r.userId = p.id
-      WHERE t.id = $1::uuid
-      GROUP BY t.id, r.id, p.id;
+      LEFT JOIN "Profile" p ON t.userId = p.id  -- Join to get the tweet's user's username
+      LEFT JOIN "Profile" rp ON r.userId = rp.id  -- Join to get the reply's user's username
+      ORDER BY t.createdAt DESC;  -- Order tweets by creation date
     `;
 
-    const result = await pool.query(query, [tweetId]);
+    const result = await pool.query(query);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Tweet not found or no replies or likes for this tweet' });
+      return res.status(404).json({ error: 'No tweets found' });
     }
 
-    // Separate tweet and replies data
-    const tweet = result.rows[0];
-    const replies = result.rows.map(row => ({
-      replyId: row.replyId,
-      replyText: row.replyText,
-      replyCreatedAt: row.replyCreatedAt,
-      replyUserId: row.replyUserId,
-      replyUserName: row.replyUserName
-    }));
+    // Organizing tweets and their replies
+    const tweets = result.rows.reduce((acc, row) => {
+      // Create tweet entry if it doesn't exist
+      if (!acc[row.tweetid]) {
+        acc[row.tweetid] = {
+          tweetId: row.tweetid,
+          text: row.tweettext,
+          createdAt: row.tweetcreatedat,
+          imagePath: row.tweetimage,
+          tweetUserId: row.tweetuserid,  // Include tweet's user ID
+          tweetUserName: row.tweetusername,  // Include tweet's username
+          likeCount: row.likecount,
+          replies: []  // Initialize an empty array for replies
+        };
+      }
 
-    // Construct the final response with tweet details, like count, and replies
-    const response = {
-      tweet: {
-        id: tweet.tweetid,
-        text: tweet.tweettext,
-        createdAt: tweet.tweetcreatedat
-      },
-      likeCount: tweet.likecount, // The count of likes for the tweet
-      replies: replies // List of replies linked to the tweet
-    };
+      // Add reply to the tweet if a reply exists
+      if (row.replyid) {
+        acc[row.tweetid].replies.push({
+          replyId: row.replyid,
+          replyText: row.replytext,
+          replyCreatedAt: row.replycreatedat,
+          replyUserId: row.replyuserid,
+          replyUserName: row.replyusername
+        });
+      }
 
-    res.status(200).json(response);
+      return acc;
+    }, {});
+
+    // Convert tweets object into an array
+    const tweetList = Object.values(tweets);
+
+    // Construct the final response with all tweets and replies
+    res.status(200).json({ tweets: tweetList });
 
   } catch (err) {
     console.error('Error fetching tweet details:', err);
@@ -220,8 +179,4 @@ exports.getTweetDetail = async (req, res) => {
 };
 
 
-// Helper function to validate UUID format
-function isValidUUID(uuid) {
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-}
+

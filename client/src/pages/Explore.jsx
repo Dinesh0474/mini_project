@@ -81,9 +81,9 @@ const Explore = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-900 text-white">
       {/* Header Section */}
-      <header className="bg-black shadow-sm">
+      <header className="bg-gray-800 shadow-sm">
         <div className="container mx-auto flex items-center justify-between p-4">
           {/* Logo */}
           <div className="flex items-center justify-center ml-5">
@@ -92,7 +92,7 @@ const Explore = () => {
           </div>
 
           {/* Search Bar */}
-          <div id="web" className="flex-1 flex justify-center mt-5">
+          <div id="web" className="flex-1 flex justify-center mt-5 relative">
             <input
               type="text"
               placeholder="Search your world"
@@ -100,16 +100,43 @@ const Explore = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)} // Update query on input change
             />
+
+            {/* Search Suggestions Section */}
+            {query.length > 0 && (
+              <section className="absolute top-full mt-1 w-full sm:w-96 md:w-[500px] bg-gray-800 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
+                {loading ? (
+                  <p className="text-white text-center py-2">Loading...</p>
+                ) : (
+                  <div className="px-4 py-2">
+                    {suggestions.length > 0 ? (
+                      <div className="flex flex-col space-y-1 mb-2">
+                        {suggestions.map((suggestion) => (
+                          <div
+                            key={suggestion.id}
+                            className="bg-gray-700 p-3 text-gray-300 hover:bg-gray-600 cursor-pointer rounded-lg transition-all"
+                          >
+                            {suggestion.username} {/* Display the suggestion */}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-400 text-center">No suggestions found</p>
+                    )}
+                  </div>
+                )}
+              </section>
+            )}
           </div>
+
         </div>
       </header>
 
       {/* Main Section */}
-      <main className="bg-black py-6">
+      <main className="bg-gray-900 py-6">
         <div className="container mx-auto">
           {/* Recommendation Section */}
           <section className="mt-4 px-4">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-2">
               {recommendations.map((item) => (
                 <div
                   key={item.id}
@@ -127,30 +154,7 @@ const Explore = () => {
           </section>
 
           {/* Search Suggestions Section */}
-          {query.length > 0 && (
-            <section className="mt-4 px-4">
-              {loading ? (
-                <p className="text-white">Loading...</p>
-              ) : (
-                <div>
-                  {suggestions.length > 0 ? (
-                    <div className="bg-gray-800 rounded-lg shadow-md p-4">
-                      <h3 className="text-white font-semibold mb-2">Suggestions</h3>
-                      <ul>
-                        {suggestions.map((suggestion) => (
-                          <li key={suggestion.id} className="text-gray-300 mb-2">
-                            {suggestion.username}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : (
-                    <p className="text-gray-400">No suggestions found</p>
-                  )}
-                </div>
-              )}
-            </section>
-          )}
+
 
           {/* Top Posts Section */}
           <h4 className="mt-5 text-sm font-bold text-white mb-4">Top Posts</h4>
@@ -161,7 +165,7 @@ const Explore = () => {
                 key={item.tweet_id}
                 src={item.imagepath} // Assuming imagepath is the key for images
                 alt="Post"
-                className="w-full rounded-lg shadow-md cursor-pointer"
+                className="w-full rounded-lg shadow-md cursor-pointer object-cover"
                 onClick={() => openModal(item)} // Open modal on click
               />
             ))}
