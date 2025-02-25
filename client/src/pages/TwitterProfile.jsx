@@ -43,7 +43,7 @@ function TwitterProfile() {
           return response.json();
         })
         .then(data => {
-          setProfile(data); // Store the fetched profile data
+          setProfile(data);
           setFormData({
             username: data.username,
             fullName: data.fullName,
@@ -132,6 +132,8 @@ function TwitterProfile() {
       .then(updatedProfile => {
         setProfile(updatedProfile); // Update the profile state with the new data
         setIsEditing(false); // Exit editing mode
+        // navigate('/twitterprofile'); // Redirect to the profile page 
+        window.location.reload(); // Reload the page to reflect the changes
       })
       .catch(error => {
         console.error('Error:', error); // Log the error for debugging
