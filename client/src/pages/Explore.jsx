@@ -4,20 +4,33 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 const Explore = () => {
-  // State to track search query and suggestions
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [post, setPost] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false); // State to track modal visibility
+  const [selectedPost, setSelectedPost] = useState(null); // State to hold selected post details
+  const [relatedPosts, setRelatedPosts] = useState([]); // State to hold posts related to clicked hashtag
 
-  // Array of recommendations with icons and names (can be static or dynamic)
   const recommendations = [
-    { id: 1, name: "#Traveling" },
-    { id: 2, name: "#Mountains" },
-    { id: 3, name: "#Technology" },
-    { id: 4, name: "#Food" },
-    { id: 5, name: "#Fitness" },
-    { id: 6, name: "#Art" },
+    { id: 1, name: "#luffy" },
+    { id: 2, name: "#zoro" },
+    { id: 3, name: "#Sanji" }
   ];
+
+  // Fetch posts from API
+  const getData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/tweets");
+      setPost(response.data); // Save posts to state
+    } catch (err) {
+      console.log("Error in fetching posts: ", err);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []); // Fetch data on mount
 
   // Function to fetch search suggestions
   const fetchSuggestions = async (query) => {
@@ -29,8 +42,7 @@ const Explore = () => {
     setLoading(true);
     try {
       const response = await axios.get(`http://localhost:3000/profiles/search?q=${query}`);
-      setSuggestions(response.data); // Update suggestions with response
-      console.log(response.data);  // For debugging purposes
+      setSuggestions(response.data);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
     } finally {
@@ -38,14 +50,35 @@ const Explore = () => {
     }
   };
 
-  // Debounce the search query to avoid multiple requests while typing
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       fetchSuggestions(query);
-    }, 500); // Wait 500ms after typing to trigger the request
+    }, 500);
 
     return () => clearTimeout(timeoutId); // Cleanup timeout on query change
   }, [query]);
+
+  // Function to open modal with the selected post
+  const openModal = (post) => {
+    setSelectedPost(post);
+    setModalOpen(true); // Open the modal
+  };
+
+  // Function to close the modal
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedPost(null); // Clear selected post
+    setRelatedPosts([]); // Clear related posts when closing the modal
+  };
+
+  // Function to handle hashtag click and filter related posts
+  const handleHashtagClick = (hashtag) => {
+    // Filter posts based on the clicked hashtag
+    const filteredPosts = post.filter((item) =>
+      item.hashtags.includes(hashtag) // Check if the post contains the hashtag
+    );
+    setRelatedPosts(filteredPosts); // Set related posts state
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -82,7 +115,12 @@ const Explore = () => {
                   key={item.id}
                   className="flex flex-col items-center justify-center p-4 bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                 >
-                  <p className="mt-1 text-sm font-medium text-gray-300">{item.name}</p>
+                  <p
+                    className="mt-1 text-sm font-medium text-gray-300"
+                    onClick={() => handleHashtagClick(item.name)} // Trigger filtering on hashtag click
+                  >
+                    {item.name}
+                  </p>
                 </div>
               ))}
             </div>
@@ -101,7 +139,7 @@ const Explore = () => {
                       <ul>
                         {suggestions.map((suggestion) => (
                           <li key={suggestion.id} className="text-gray-300 mb-2">
-                            {suggestion.username} {/* Display the suggestion */}
+                            {suggestion.username}
                           </li>
                         ))}
                       </ul>
@@ -117,29 +155,86 @@ const Explore = () => {
           {/* Top Posts Section */}
           <h4 className="mt-5 text-sm font-bold text-white mb-4">Top Posts</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {[0, 1, 2, 3, 4, 5, 6].map((item) => (
-              <img key={item} src={`./img/feed${item}.jpg`} alt="" className="w-full rounded-lg shadow-md" />
+            {/* Dynamically rendering images from the API */}
+            {post.map((item) => (
+              <img
+                key={item.tweet_id}
+                src={item.imagepath} // Assuming imagepath is the key for images
+                alt="Post"
+                className="w-full rounded-lg shadow-md cursor-pointer"
+                onClick={() => openModal(item)} // Open modal on click
+              />
             ))}
           </div>
 
-          {/* Most Recent Section */}
-          <h4 className="text-sm font-bold text-white mt-8 mb-4">Most Recent</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {[7, 8, 9, 10, 11, 12, 13, 14].map((item) => (
-              <img key={item} src={`./img/feed${item}.jpg`} alt="" className="w-full rounded-lg shadow-md" />
-            ))}
-          </div>
+          {/* Modal - Display image and user details */}
+          {modalOpen && selectedPost && (
+            <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+              <div className="bg-gray-900 p-6 rounded-lg max-w-4xl w-full flex">
+                {/* Left Side: Image */}
+                <div className="flex-none w-1/2 pr-4">
+                  <img
+                    src={selectedPost.imagepath} // Display selected image
+                    alt="Selected Post"
+                    className="w-full h-auto rounded-lg shadow-lg"
+                  />
+                </div>
+
+                {/* Right Side: Details */}
+                <div className="flex-1 w-1/2">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-white font-serif text-4xl">{selectedPost.username}</h3>
+                    <button onClick={closeModal} className="text-white text-xl font-bold cursor-pointer">
+                      &times; {/* Close button */}
+                    </button>
+                  </div>
+
+                  <div className="text-white p-10 text-xl">
+                    <p className="mt-4">{selectedPost.tweet_text}</p> {/* Display tweet text */}
+                    <p className="mt-2 text-sm">
+                      <strong>Created At:</strong> {new Date(selectedPost.tweet_created_at).toLocaleString()}
+                    </p>
+                    <p className="mt-2 text-sm">
+                      <strong>Hashtags:</strong>{" "}
+                      {selectedPost.hashtags.map((hashtag, index) => (
+                        <span
+                          key={index}
+                          className="text-blue-500 cursor-pointer"
+                          onClick={() => handleHashtagClick(hashtag)} // Handle hashtag click
+                        >
+                          {hashtag}
+                          {index < selectedPost.hashtags.length - 1 && ", "}
+                        </span>
+                      ))}
+                    </p>
+                    <p className="mt-2 text-sm">
+                      <strong>Likes:</strong> {selectedPost.like_count}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Related Posts Section based on Hashtag Click */}
+          {relatedPosts.length > 0 && (
+            <section className="mt-5 px-4">
+              <h3 className="text-white text-lg font-semibold">Related Posts</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                {relatedPosts.map((item) => (
+                  <img
+                    key={item.tweet_id}
+                    src={item.imagepath}
+                    alt="Related Post"
+                    className="w-full rounded-lg shadow-md cursor-pointer"
+                    onClick={() => openModal(item)} // Open modal on click
+                  />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </main>
-
-      {/* Footer Section (App Only) */}
-      <footer className="fixed bottom-0 w-full bg-black p-4 flex items-center justify-between shadow-lg border-t border-gray-800">
-        <i className="fas fa-home text-2xl text-gray-400"></i>
-        <i className="fas fa-search text-2xl text-gray-400"></i>
-        <i className="far fa-plus-square text-2xl text-gray-400"></i>
-        <i className="far fa-heart text-2xl text-gray-400"></i>
-        <img src="./img/user.jpg" alt="user" className="w-8 h-8 rounded-full" />
-      </footer>
     </div>
   );
 };
