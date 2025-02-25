@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Post = () => {
   const [posts, setPost] = useState([]);
@@ -9,6 +10,19 @@ console.log(user_id);
   const [commentsState, setCommentsState] = useState([]);
   const [like, setLike] = useState(0);
   const [comment, setComment] = useState(0);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      // Redirect to login page if token is not found
+      navigate('/login');
+    }
+  }, [navigate]);
+
 const likePost= async(tweetId)=>{
     try{
       console.log("tzzzweetssssssId",tweetId);

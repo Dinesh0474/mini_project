@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { useNavigate } from 'react-router-dom';
 
 const Explore = () => {
   const [query, setQuery] = useState("");
@@ -11,6 +12,18 @@ const Explore = () => {
   const [modalOpen, setModalOpen] = useState(false); // State to track modal visibility
   const [selectedPost, setSelectedPost] = useState(null); // State to hold selected post details
   const [relatedPosts, setRelatedPosts] = useState([]); // State to hold posts related to clicked hashtag
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      // Redirect to login page if token is not found
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const recommendations = [
     { id: 1, name: "#luffy" },

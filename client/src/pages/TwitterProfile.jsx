@@ -14,9 +14,17 @@ function TwitterProfile() {
     age: '',
     profession: ''
   });
-  const userId = localStorage.getItem('user_id'); // Replace 'userId' with the actual key used
+  const userId = localStorage.getItem('user_id'); 
   const token = localStorage.getItem('token');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // const token = localStorage.getItem('token');
+    
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   useEffect(() => {
     if (token) {
@@ -34,13 +42,13 @@ function TwitterProfile() {
           return response.json();
         })
         .then(data => {
-          setProfile(data); // Store the fetched profile data
+          setProfile(data);
           setFormData({
             username: data.username,
             fullName: data.fullName,
             age: data.age,
             profession: data.profession
-          }); // Initialize form data with current profile data
+          }); 
         })
         .catch(error => {
           console.error('Error:', error);
@@ -97,7 +105,8 @@ function TwitterProfile() {
       .then(updatedProfile => {
         setProfile(updatedProfile); // Update the profile state with the new data
         setIsEditing(false); // Exit editing mode
-        // navigate('/twitterprofile'); // Redirect to the profile page
+        // navigate('/twitterprofile'); // Redirect to the profile page 
+        window.location.reload(); // Reload the page to reflect the changes
       })
       .catch(error => {
         console.error('Error:', error); // Log the error for debugging

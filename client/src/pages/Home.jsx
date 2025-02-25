@@ -191,6 +191,7 @@ import { useState, useEffect } from "react";
 import CreatePost from "../components/CreatePost";
 import SideBar from "../components/SideBar";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [posts, setPost] = useState([]);
@@ -200,6 +201,18 @@ const Home = () => {
   const user_id = localStorage.getItem("user_id");
 
   console.log(user_id);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      // Redirect to login page if token is not found
+      navigate('/login');
+    }
+  }, [navigate]);
 
   // const likePost = async (tweetId) => {
   //   try {
