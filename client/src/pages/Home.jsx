@@ -98,7 +98,7 @@ const Home = () => {
                 />
                 <div className="ml-2">
                   <h3 className="text-sm font-semibold">{post.name}</h3>
-                  <span className="text-sm text-gray-400">{post.tweetUserName}</span>
+                  <span className="text-sm text-gray-400">{post.username}</span>
                 </div>
               </div>
 
