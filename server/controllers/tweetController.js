@@ -107,7 +107,7 @@ exports.getAllTweetsWithReplies = async (req, res) => {
         t.text AS tweetText, 
         t.createdAt AS tweetCreatedAt,
         t.userId AS tweetUserId,  -- tweet's user ID
-        
+        t.hashtags, -- Include hashtags
         -- Get the username of the tweet's author by joining Profile table
         p.username AS tweetUserName,  -- tweet's username
         
@@ -146,7 +146,8 @@ exports.getAllTweetsWithReplies = async (req, res) => {
           createdAt: row.tweetcreatedat,
           imagePath: row.tweetimage,
           tweetUserId: row.tweetuserid,  // Include tweet's user ID
-          tweetUserName: row.tweetusername,  // Include tweet's username
+          tweetUserName: row.tweetusername, 
+          hashtags:row.hashtags, // Include tweet's username
           likeCount: row.likecount,
           replies: []  // Initialize an empty array for replies
         };

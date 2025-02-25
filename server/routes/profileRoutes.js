@@ -7,6 +7,7 @@ const router = express.Router();
 // CRUD operations for profiles
 router.post('/', profileController.createProfile);
 router.get('/', profileController.getProfiles);
+router.get('/main/:id', profileController.getMainProfileById);
 router.get('/search', profileController.searchProfiles);
  
 router.get('/:id',validateToken, profileController.getProfileById);
