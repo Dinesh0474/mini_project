@@ -173,22 +173,25 @@ exports.searchProfiles = async (req, res) => {
  
 
 // Update a profile
+// Update a profile
 exports.updateProfile = async (req, res) => {
   const { id } = req.params;
-  const { username, fullName, email, passwordHash, age, profession } = req.body;
+  const { username, fullName, age, profession } = req.body; // Removed email and passwordHash
 
   try {
     const result = await pool.query(
-      'UPDATE "Profile" SET username = $1, fullName = $2, email = $3, passwordHash = $4, age = $5, profession = $6 WHERE id = $7 RETURNING *',
-      [username, fullName, email, passwordHash, age, profession, id]
+      'UPDATE "Profile" SET username = $1, fullName = $2, age = $3, profession = $4 WHERE id = $5 RETURNING *',
+      [username, fullName, age, profession, id] // Adjusted the parameters accordingly
     );
+
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Profile not found' });
     }
+
     res.status(200).json(result.rows[0]);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error updating profile:', error); // Log the error for debugging
+    res.status(500).json({ message: 'Server error', error: error.message }); // Return a meaningful error message
   }
 };
 

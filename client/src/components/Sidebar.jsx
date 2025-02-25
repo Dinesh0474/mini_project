@@ -121,7 +121,7 @@ const SideBar = () => {
             <i className="ri-bookmark-line text-xl mr-3"></i>
             <span className="text-lg">Bookmarks</span>
           </a>
-          <a href="/profile" className="flex items-center text-gray-400 hover:text-white">
+          <a href="/TwitterProfile" className="flex items-center text-gray-400 hover:text-white">
             <i className="ri-user-line text-xl mr-3"></i>
             <span className="text-lg">Profile</span>
           </a>
