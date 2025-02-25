@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+const jwt = require('jsonwebtoken');
 import pool from '../models/db.js';
  
 const validateToken = async (req, res, next) => {
