@@ -70,21 +70,21 @@ const SideBar = () => {
           {/* Profile Picture */}
           <div className="flex justify-center">
             <img
-              src="/src/assets/profile-0.jpeg" // Update if needed based on the response from the API
+              src="/src/assets/profile.jpg" // Update if needed based on the response from the API
               alt="Profile"
               className="w-16 h-16 rounded-full border-2 border-blue-500"
             />
           </div>
 
-          {/* User Name and Verification Badge */}
+          {/* User Name and Verification Badge
           <div className="mt-2 flex items-center justify-center">
             <h1 className="text-lg font-semibold">{profileData.name}</h1>
             <img
-              src="/src/assets/verify.png" // You can update this if needed
+              src="/src/assets/verify.jpg" // You can update this if needed
               alt="Verified"
               className="w-4 h-4 ml-1"
             />
-          </div>
+          </div> */}
 
           {/* Username */}
           <span className="text-sm text-gray-400">@{profileData.username}</span>
