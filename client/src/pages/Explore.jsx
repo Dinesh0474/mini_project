@@ -9,9 +9,11 @@ const Explore = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [post, setPost] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false); // State to track modal visibility
-  const [selectedPost, setSelectedPost] = useState(null); // State to hold selected post details
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
   const [relatedPosts, setRelatedPosts] = useState([]); // State to hold posts related to clicked hashtag
+  const [selectedHashtag, setSelectedHashtag] = useState(null);
+
 
   const navigate = useNavigate();
 
@@ -28,7 +30,8 @@ const Explore = () => {
   const recommendations = [
     { id: 1, name: "#luffy" },
     { id: 2, name: "#zoro" },
-    { id: 3, name: "#Sanji" }
+    { id: 3, name: "#Sanji" },
+    { id: 4, name: "#react" },
   ];
 
   // Fetch posts from API
@@ -84,27 +87,28 @@ const Explore = () => {
     setRelatedPosts([]); // Clear related posts when closing the modal
   };
 
-  // Function to handle hashtag click and filter related posts
+  // Function to handle hashtag click and filter posts based on the clicked hashtag
   const handleHashtagClick = (hashtag) => {
-    // Filter posts based on the clicked hashtag
+    console.log("Selected Hashtag: ", hashtag);  // Debugging line
+    setSelectedHashtag(hashtag);  // Set the selected hashtag
     const filteredPosts = post.filter((item) =>
-      item.hashtags.includes(hashtag) // Check if the post contains the hashtag
+      item.hashtags.includes(hashtag) // Filter posts by the selected hashtag
     );
-    setRelatedPosts(filteredPosts); // Set related posts state
+    setRelatedPosts(filteredPosts); // Update the related posts
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header Section */}
       <header className="bg-gray-800 shadow-sm">
         <div className="container mx-auto flex items-center justify-between p-4">
-          {/* Logo */}
           <div className="flex items-center justify-center ml-5">
-            <FontAwesomeIcon icon={faTwitter} style={{ color: "#ffffff" }} size="2x" />
+            <a href="/home" className="flex items-center">
+            {/* <FontAwesomeIcon icon={faTwitter} style={{ color: "#ffffff" }} size="2x" /> */}
             <h1 className="ml-2 text-white">JWorld</h1>
+            </a>
           </div>
 
-          {/* Search Bar */}
           <div id="web" className="flex-1 flex justify-center mt-5 relative">
             <input
               type="text"
@@ -114,7 +118,6 @@ const Explore = () => {
               onChange={(e) => setQuery(e.target.value)} // Update query on input change
             />
 
-            {/* Search Suggestions Section */}
             {query.length > 0 && (
               <section className="absolute top-full mt-1 w-full sm:w-96 md:w-[500px] bg-gray-800 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
                 {loading ? (
@@ -128,7 +131,7 @@ const Explore = () => {
                             key={suggestion.id}
                             className="bg-gray-700 p-3 text-gray-300 hover:bg-gray-600 cursor-pointer rounded-lg transition-all"
                           >
-                            {suggestion.username} {/* Display the suggestion */}
+                            {suggestion.username}
                           </div>
                         ))}
                       </div>
@@ -140,74 +143,71 @@ const Explore = () => {
               </section>
             )}
           </div>
-
         </div>
       </header>
 
-      {/* Main Section */}
       <main className="bg-gray-900 py-6">
         <div className="container mx-auto">
-          {/* Recommendation Section */}
           <section className="mt-4 px-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-2">
               {recommendations.map((item) => (
                 <div
-                  key={item.id}
-                  className="flex flex-col items-center justify-center p-4 bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-                >
-                  <p
-                    className="mt-1 text-sm font-medium text-gray-300"
-                    onClick={() => handleHashtagClick(item.name)} // Trigger filtering on hashtag click
-                  >
-                    {item.name}
-                  </p>
-                </div>
+                key={item.id}
+                className={`flex flex-col items-center justify-center p-4  rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer
+                  ${selectedHashtag === item.name ? 'bg-gray-500' : 'bg-gray-800'}`} // Change background color based on selectedHashtag
+                onClick={() => handleHashtagClick(item.name)}
+              >
+                <p className="mt-1 text-sm font-medium text-gray-300">
+                  {item.name}
+                </p>
+              </div>
+              
               ))}
             </div>
           </section>
 
-          {/* Search Suggestions Section */}
-
-
-          {/* Top Posts Section */}
           <h4 className="mt-5 text-sm font-bold text-white mb-4">Top Posts</h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {/* Dynamically rendering images from the API */}
-            {post.map((item) => (
-              <img
-                key={item.tweet_id}
-                src={item.imagepath} // Assuming imagepath is the key for images
-                alt="Post"
-                className="w-full rounded-lg shadow-md cursor-pointer object-cover"
-                onClick={() => openModal(item)} // Open modal on click
-              />
-            ))}
+            {relatedPosts.length > 0
+              ? relatedPosts.map((item) => (
+                  <img
+                    key={item.tweet_id}
+                    src={item.imagepath}
+                    alt="Related Post"
+                    className="w-full h-2/3 rounded-lg shadow-md cursor-pointer object-cover"
+                    onClick={() => openModal(item)}
+                  />
+                ))
+              : post.map((item) => (
+                  <img
+                    key={item.tweet_id}
+                    src={item.imagepath}
+                    alt="Post"
+                    className="w-full h-2/3 rounded-lg shadow-md cursor-pointer object-cover"
+                    onClick={() => openModal(item)}
+                  />
+                ))}
           </div>
 
-          {/* Modal - Display image and user details */}
           {modalOpen && selectedPost && (
             <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
               <div className="bg-gray-900 p-6 rounded-lg max-w-4xl w-full flex">
-                {/* Left Side: Image */}
                 <div className="flex-none w-1/2 pr-4">
                   <img
-                    src={selectedPost.imagepath} // Display selected image
+                    src={selectedPost.imagepath}
                     alt="Selected Post"
                     className="w-full h-auto rounded-lg shadow-lg"
                   />
                 </div>
-
-                {/* Right Side: Details */}
                 <div className="flex-1 w-1/2">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-white font-serif text-4xl">{selectedPost.username}</h3>
                     <button onClick={closeModal} className="text-white text-xl font-bold cursor-pointer">
-                      &times; {/* Close button */}
+                      &times;
                     </button>
                   </div>
-
                   <div className="text-white p-10 text-xl">
-                    <p className="mt-4">{selectedPost.tweet_text}</p> {/* Display tweet text */}
+                    <p className="mt-4">{selectedPost.tweet_text}</p>
                     <p className="mt-2 text-sm">
                       <strong>Created At:</strong> {new Date(selectedPost.tweet_created_at).toLocaleString()}
                     </p>
@@ -217,7 +217,7 @@ const Explore = () => {
                         <span
                           key={index}
                           className="text-blue-500 cursor-pointer"
-                          onClick={() => handleHashtagClick(hashtag)} // Handle hashtag click
+                          onClick={() => handleHashtagClick(hashtag)}
                         >
                           {hashtag}
                           {index < selectedPost.hashtags.length - 1 && ", "}
@@ -232,9 +232,8 @@ const Explore = () => {
               </div>
             </div>
           )}
-
-          {/* Related Posts Section based on Hashtag Click */}
-          {relatedPosts.length > 0 && (
+          {/* <h1>Related posts</h1> */}
+          {/* {relatedPosts.length > 0 && (
             <section className="mt-5 px-4">
               <h3 className="text-white text-lg font-semibold">Related Posts</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
@@ -244,12 +243,12 @@ const Explore = () => {
                     src={item.imagepath}
                     alt="Related Post"
                     className="w-full rounded-lg shadow-md cursor-pointer"
-                    onClick={() => openModal(item)} // Open modal on click
+                    onClick={() => openModal(item)}
                   />
                 ))}
               </div>
             </section>
-          )}
+          )} */}
         </div>
       </main>
     </div>
