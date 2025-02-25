@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import CreatePost from "../components/CreatePost";
 import SideBar from "../components/SideBar";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const [posts, setPost] = useState([]);
   const [commentsState, setCommentsState] = useState([]);
+  const [like, setLike] = useState(0);
   const user_id = localStorage.getItem("user_id");
   const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
 
@@ -27,7 +28,7 @@ const Home = () => {
     };
 
     getPostsAndBookmarks();
-  }, );
+  }, []);
 
   const likePost = async (tweetId, index) => {
     try {
@@ -240,13 +241,13 @@ const Home = () => {
       </div>
 
       <div className="w-100 bg-gray-800 p-6 sticky top-0 h-screen overflow-y-auto hidden lg:block">
-        <div className="flex flex-col items-center m-2 pl-2 bg-gray-700 rounded-full px-4 py-2 gap-2">
-          <p>Jworld is evolving! 🚀
+        <div className="flex flex-col items-center m-2 pl-2 bg-gray-700 rounded-full px-4 py-2 gap">
+          <p>"Jworld is evolving! 🚀"
           </p>
-          <p>Your thoughts, your world! 🌎
+          <p>"Your thoughts, your world! 🌎"
 
           </p>
-          <p>Stay connected, stay updated! 📢
+          <p>"Stay connected, stay updated! 📢"
           </p>
 
         </div>

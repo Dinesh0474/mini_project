@@ -358,7 +358,7 @@ function TwitterProfile() {
                   <div key={post.id} className="bg-gray-900 rounded-lg p-7 mb-6 max-h-[675px]">
                     <div className="flex items-center">
                       <img
-                        src="src/assets/profile.jpg"
+                        src="/src/assets/profile.jpg"
                         alt="Profile"
                         className="w-12 h-12 mt-3 rounded-full"
                       />
