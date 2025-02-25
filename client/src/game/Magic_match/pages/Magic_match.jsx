@@ -6,6 +6,8 @@ import img4 from "../images/cartoon4.png";
 import img5 from "../images/cartoon5.png";
 import img6 from "../images/cartoon6.png";
 import game_back from "../images/game_logo.png";
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Simplified card images array
 const cardImages = [
@@ -23,6 +25,7 @@ const MagicMatch = () => {
   const [choiceOne, setChoiceOne] = useState(null);
   const [choiceTwo, setChoiceTwo] = useState(null);
   const [gameOver, setGameOver] = useState(false);
+  const navigate = useNavigate();
 
   const shuffleCards = () => {
     // Step 1: Duplicate the cards array
@@ -97,6 +100,10 @@ const MagicMatch = () => {
   };
 
   return (
+    <div>
+      <div className="text-bold text-white text-2xl pb-1 pl-5 p-3 bg-gray-800" onClick={() => navigate('/home')}>
+              <ArrowLeft />
+      </div>
     <div className="bg-gray-800 min-h-screen flex flex-col items-center justify-center">
       <h1 className="text-4xl font-mono text-center text-white mb-4">
         Magic Match
@@ -124,6 +131,7 @@ const MagicMatch = () => {
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 };

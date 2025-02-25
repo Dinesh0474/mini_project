@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // Import useNavigate
-import { Eye, Heart, MessageCircle, Trash2, BadgeCheck, Repeat2 } from 'lucide-react';
+import { Eye, Heart, MessageCircle, Trash2, BadgeCheck, ArrowLeft} from 'lucide-react';
 import axios from 'axios';
 // import toi from "../assets/toi.jpg";
 import { toast, ToastContainer } from 'react-toastify';
@@ -256,14 +256,17 @@ function TwitterProfile() {
         <div className="w-full md:w-[60%] md:pr-2 mb-4 md:mb-0">
           <div className="bg-gray-800 rounded-lg p-4">
             <div className="relative">
-              <div className="h-57 bg-gray-700 rounded-lg overflow-hidden hover:scale-102">
-                <div className="w-full h-full bg-[url(src/assets/banner.jpg)]" />
+              <div className="text-bold text-2xl pb-1" onClick={() => navigate('/home')}>
+              <ArrowLeft />
+              </div>
+              <div className="h-57 bg-gray-700 rounded-lg overflow-hidden">
+                <div className="w-full h-full bg-[url(/src/assets/banner.jpg)]" />
                 {/* Cover Image Placeholder */}
               </div>
 
               <div className="absolute -mt-15 left-4">
                 <img
-                  src="src/assets/profile.jpg" // Replace with your profile picture URL
+                  src="/src/assets/profile.jpg" // Replace with your profile picture URL
                   alt="Profile"
                   className="w-30 h-30 rounded-full border-4 border-gray-900 "
                 />
@@ -380,7 +383,7 @@ function TwitterProfile() {
                         <MessageCircle />
                         <span className="text-gray-400">{post.comments || "0"}</span>
                       </div>
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-4" onClick={() => deletePost(post.id)}>
                         <Trash2 />
                         {/* <span className="text-gray-400">{post.shares || "0"}</span> */}
                       </div>
@@ -404,7 +407,7 @@ function TwitterProfile() {
             {randomUsers.map((user) => (
               <div key={user.id} className="flex items-center mt-3 pl-4 bg-gray-800">
                 <img
-                  src={`src/assets/profile-${getRandomInt(0, 9)}.jpg`} // Ensure the avatar URL is correct
+                  src={`/src/assets/profile-${getRandomInt(0, 9)}.jpg`} // Ensure the avatar URL is correct
                   alt={user.name}
                   className="w-12 h-12 rounded-full mr-2"
                 />
@@ -439,12 +442,7 @@ function TwitterProfile() {
             </button>
           </div>
 
-          <div className="mt-2">
-            <div className="bg-gray-800 mt-4 rounded-lg p-4">
-              <h3 className="font-semibold text-lg">What's happening</h3>
-              {/* Add trending topics or news here */}
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

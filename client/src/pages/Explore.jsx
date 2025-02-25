@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+
+
+ // Import useNavigate
 
 const Explore = () => {
   const [query, setQuery] = useState("");
@@ -95,6 +99,9 @@ const Explore = () => {
     <div className="min-h-screen bg-gray-900 text-white">
       <header className="bg-gray-800 shadow-sm">
         <div className="container mx-auto flex items-center justify-between p-4">
+        <div className="text-bold text-2xl pb-1 pl-5" onClick={() => navigate('/home')}>
+              <ArrowLeft />
+      </div>
           <div className="flex items-center justify-center ml-5">
             <a href="/home" className="flex items-center">
               {/* <FontAwesomeIcon icon={faTwitter} style={{ color: "#ffffff" }} size="2x" /> */}

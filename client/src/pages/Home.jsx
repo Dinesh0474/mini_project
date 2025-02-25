@@ -154,7 +154,7 @@ const Home = () => {
             <div key={post.tweetId} className="bg-gray-800 rounded-lg p-4 mb-6 overflow-hidden">
               <div className="flex items-center">
                 <img
-                  src={`/src/assets/Posts/posts-${index}.jpeg`}
+                  src={`/src/assets/profile-3.jpg`}
                   alt="Profile"
                   className="w-14 h-14 rounded-full"
                 />
@@ -241,16 +241,18 @@ const Home = () => {
       </div>
 
       <div className="w-100 bg-gray-800 p-6 sticky top-0 h-screen overflow-y-auto hidden lg:block">
-        <div className="flex items-center bg-gray-700 rounded-full px-4 py-2">
-          <i className="ri-search-line text-gray-400"></i>
-          <input
-            type="text"
-            placeholder="Search Twitter"
-            className="bg-transparent ml-2 w-full focus:outline-none"
-          />
+        <div className="flex flex-col items-center m-2 pl-2 bg-gray-700 rounded-full px-4 py-2 gap-2">
+          <p>"Jworld is evolving! 🚀"
+          </p>
+          <p>"Your thoughts, your world! 🌎"
+
+          </p>
+          <p>"Stay connected, stay updated! 📢"
+          </p>
+
         </div>
       </div>
-      <ToastContainer />
+
     </div>
   );
 };

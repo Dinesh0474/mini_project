@@ -48,7 +48,7 @@ function Login() {
       <div className="bg-gray-800 rounded-xl shadow-2xl p-2 w-full max-w-4xl min-h-[70vh] flex">
         {/* Left Side: Image Section */}
         <div className="w-1/2 hidden md:block">
-          <img src="src/assets/gomez.webp" alt="login illustration" className="w-full h-full object-cover rounded-xl" />
+          <img src="/src/assets/login_image.jpg" alt="login illustration" className="w-full h-full object-cover rounded-xl" />
         </div>
 
         {/* Right Side: Form Section */}
@@ -105,11 +105,11 @@ function Login() {
             </div>
 
             {/* Forgot Password Link */}
-            <div className="flex items-center mt-4 justify-center">
+            {/* <div className="flex items-center mt-4 justify-center">
               <a href="/forgetpassword" className="text-blue-500 hover:underline cursor-pointer">
                 Forget Password?
               </a>
-            </div>
+            </div> */}
           </form>
 
           {/* Sign Up Link */}

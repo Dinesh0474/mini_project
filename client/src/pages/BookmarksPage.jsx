@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
- 
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 const BookmarksPage = () => {
   const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
   const [loading, setLoading] = useState(true); // For loading state
   const [error, setError] = useState(null); // To handle any potential errors
   const userId = localStorage.getItem("user_id");
   console.log(userId);
+
+  const navigate = useNavigate();
  
   useEffect(() => {
     // Fetch bookmarks for the user
@@ -55,6 +58,9 @@ const BookmarksPage = () => {
  
   return (
     <div className="min-h-screen bg-gray-900 text-white py-8">
+      <div className="text-bold text-2xl pb-1 pl-5" onClick={() => navigate('/home')}>
+              <ArrowLeft />
+              </div>
       {loading ? (
         <p className="text-center text-xl">Loading...</p> // Show loading text while data is being fetched
       ) : error ? (
@@ -63,6 +69,7 @@ const BookmarksPage = () => {
         <p className="text-center text-xl">No posts bookmarked yet!</p> // Handle case where there are no bookmarks
       ) : (
         <div className="container mx-auto px-4">
+          
           <h2 className='font-sans text-center text-5xl py-5'>Saved Posts</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {bookmarkedTweets.map((bookmark) => (
