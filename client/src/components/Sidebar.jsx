@@ -3,11 +3,12 @@ import "remixicon/fonts/remixicon.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import axios from 'axios'; // Make sure to install axios
+import { useNavigate } from 'react-router-dom';
 
 const SideBar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [profileData, setProfileData] = useState(null); // State to hold dynamic profile data
-
+  // const userId=localStorage.getItem("user_id");
   useEffect(() => {
     const handleZoom = () => {
       const zoomLevel = window.outerWidth / window.innerWidth;
@@ -20,9 +21,9 @@ const SideBar = () => {
     return () => window.removeEventListener("resize", handleZoom);
   }, []);
 
+  const userId = localStorage.getItem("user_id");
   useEffect(() => {
     // Retrieve the user_id from localStorage
-    const userId = localStorage.getItem("user_id");
 
     if (userId) {
       // Fetch profile data using the user_id from localStorage
@@ -40,7 +41,12 @@ const SideBar = () => {
       console.error("User ID is not available in localStorage");
     }
   }, []);
-
+  console.log(userId);
+  
+  const navigate=useNavigate()
+  const navToProile = () => {
+    navigate(`/twitterprofile/${userId}`);
+  }
   if (!profileData) {
     return <div>Loading...</div>; // Loading state while fetching the profile data
   }
@@ -117,14 +123,14 @@ const SideBar = () => {
             <span className="text-lg">Explore</span>
           </a>
 
-          <a href="#" className="flex items-center text-gray-400 hover:text-white">
+          <a href="/bookmarks" className="flex items-center text-gray-400 hover:text-white">
             <i className="ri-bookmark-line text-xl mr-3"></i>
             <span className="text-lg">Bookmarks</span>
           </a>
-          <a href="/TwitterProfile" className="flex items-center text-gray-400 hover:text-white">
+          <div onClick={navToProile} className="flex items-center text-gray-400 hover:text-white cursor-pointer">
             <i className="ri-user-line text-xl mr-3"></i>
             <span className="text-lg">Profile</span>
-          </a>
+          </div>
         </div>
       </div>
     </div>

@@ -1,37 +1,36 @@
+import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import UserProfile from './pages/UserProfile';
 
-import React, { Profiler } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
-import Login from './pages/Login';
-import SignUp from './pages/Signup';
-import Home from './pages/Home';
-import Post from './pages/Post';
-import Explore from './pages/Explore';
-import TwitterProfile from './pages/TwitterProfile';
-
-
-// import Home from './components/Home';
-
-
-
+// Lazy load components
+const Login = React.lazy(() => import('./pages/Login'));
+const SignUp = React.lazy(() => import('./pages/Signup'));
+const Home = React.lazy(() => import('./pages/Home'));
+const Post = React.lazy(() => import('./pages/Post'));
+const Explore = React.lazy(() => import('./pages/Explore'));
+const TwitterProfile = React.lazy(() => import('./pages/TwitterProfile'));
+const BookmarksPage = React.lazy(() => import('./pages/BookmarksPage'));
 
 function App() {
-
-  
   return (
     <div>
-    <Router>
-      <div className="min-h-screen bg-gradient-to-r from-blue-400 to-green-300"> {/* Apply background here */}
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/post" element={<Post />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/twitterprofile" element={<TwitterProfile />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
-    </Router>
+      <Router>
+        <div className="min-h-screen bg-gray-900"> {/* Apply background here */}
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/post" element={<Post />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/bookmarks" element={<BookmarksPage />} />
+              <Route path="/twitterprofile/:userId" element={<TwitterProfile />} />
+              <Route path="/userprofile/:userId" element={<UserProfile />} />
+              {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+            </Routes>
+          </Suspense>
+        </div>
+      </Router>
     </div>
   );
 }

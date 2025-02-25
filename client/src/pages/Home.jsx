@@ -1,53 +1,47 @@
-
-
-import "remixicon/fonts/remixicon.css";
 import { useState, useEffect } from "react";
 import CreatePost from "../components/CreatePost";
 import SideBar from "../components/SideBar";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const [posts, setPost] = useState([]);
-  const [like,setLike] = useState(0);
   const [commentsState, setCommentsState] = useState([]);
-  const [newComment, setNewComment] = useState("");
+  const [like, setLike] = useState(0);
   const user_id = localStorage.getItem("user_id");
+  const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
 
-  console.log(user_id);
+  useEffect(() => {
+    const getPostsAndBookmarks = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/tweets/info");
+        setPost(response.data.tweets);
 
-  // const likePost = async (tweetId) => {
-  //   try {
-  //     setLike(like => like + 1);
-  //     const response = await axios.post("http://localhost:3000/likes/", {
-  //       tweetId: tweetId,
-  //       userId: user_id,
-  //     });
-  //     console.log("like is added", like);
-  //     console.log(response.data);
-  //   } catch (err) {
-  //     console.log("Error in adding like", err);
-  //   }
-  // };
+        setCommentsState(response.data.tweets.map(() => ({ isCommenting: false, comment: "", replies: [] })));
+
+        const bookmarksResponse = await axios.get(`http://localhost:3000/bookmarks/${user_id}`);
+        setBookmarkedTweets(bookmarksResponse.data);
+      } catch (err) {
+        console.log("Error in fetching posts or bookmarks: ", err);
+      }
+    };
+
+    getPostsAndBookmarks();
+  }, []);
 
   const likePost = async (tweetId, index) => {
     try {
-      // Optimistically update the like count
       const updatedPosts = [...posts];
-      console.log(updatedPosts[index], posts[index]);
       
-      //updatedPosts[index].likeCount = parseInt(updatedPosts[index].likeCount) + 1; // Increment the like count
-      //setPost(updatedPosts);  // Update the posts state immediately to reflect the new like count
-  
       const response = await axios.post("http://localhost:3000/likes/", {
         tweetId: tweetId,
         userId: user_id,
       });
-  
-      console.log("Like is added", response.data);
-      console.log(response.data.message);
-      if(response.data.message){
+
+      if (response.data.message) {
         updatedPosts[index].likeCount = parseInt(updatedPosts[index].likeCount) - 1;
-      }else{
+      } else {
         updatedPosts[index].likeCount = parseInt(updatedPosts[index].likeCount) + 1;
       }
       setPost(updatedPosts);
@@ -55,27 +49,42 @@ const Home = () => {
       console.log("Error in adding like", err);
     }
   };
-  
 
-  const getPost = async () => {
+  const handleBookmarkClick = async (tweetId) => {
     try {
-      const response = await axios.get("http://localhost:3000/tweets/info");
-      console.log(response.data);
+      const alreadyBookmarked = bookmarkedTweets.some((tweet) => tweet.tweetId === tweetId);
 
-      // Ensure that the posts are properly mapped
-      setPost(response.data.tweets);  // Make sure that response.data.tweets exists
+      if (!alreadyBookmarked) {
+        const response = await axios.post("http://localhost:3000/bookmarks/", { tweetId, userId: user_id });
 
-      // Initialize comment state
-      setCommentsState(response.data.tweets.map(() => ({ isCommenting: false, comment: "", replies: [] })));
-    } catch (err) {
-      console.log("Error in fetching posts: ", err);
+        if(response.data.isAlreadyBookmarked){
+          toast.error("This post is already bookmarked.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false, 
+            closeOnClick: true, 
+            pauseOnHover: true,
+            draggable: true,
+          });
+        } else {
+          toast.success("Post bookmarked successfully!");
+          setBookmarkedTweets((prevState) => [
+            ...prevState,
+            { tweetId, userId: user_id, timestamp: Date.now() },
+          ]);
+        }
+      } else {
+        toast.info("This post is already bookmarked.");
+      }
+    } catch (error) {
+      console.error("Error bookmarking post:", error);
+      toast.error("Error bookmarking post!");
     }
   };
 
   const getReplies = async (tweetId, index) => {
     try {
       const response = await axios.get(`http://localhost:3000/replies/${tweetId}`);
-      console.log(response.data);
 
       const updatedCommentsState = [...commentsState];
       updatedCommentsState[index].replies = response.data;
@@ -85,42 +94,26 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    getPost(); // Fetch posts on component mount
-  }, []); // Empty dependency array means it runs only once
-
   const handleCommentToggle = async (index, tweetId) => {
-    // Only fetch replies if the comment section is being opened (not closed)
     const updatedCommentsState = [...commentsState];
     updatedCommentsState[index].isCommenting = !updatedCommentsState[index].isCommenting;
     setCommentsState(updatedCommentsState);
-  
-    // Fetch replies only when the comment section is opened
+
     if (updatedCommentsState[index].isCommenting) {
-      try {
-        await getReplies(tweetId, index); // Fetch replies
-      } catch (err) {
-        console.log("Error fetching replies:", err);
-      }
+      await getReplies(tweetId, index);
     }
   };
-  
 
   const handlePostComment = async (index, tweetId) => {
-    console.log(tweetId)
     const commentText = commentsState[index].comment;
     if (commentText.trim()) {
       try {
-        // Post the new comment
         const response = await axios.post("http://localhost:3000/replies", {
           userId: user_id,
           tweetId: tweetId,
           text: commentText,
         });
-        
-        console.log("New comment posted:", response.data);
-        
-        // Add the new comment to the replies list
+
         setCommentsState((prevState) =>
           prevState.map((item, idx) =>
             idx === index
@@ -151,7 +144,7 @@ const Home = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-900 text-white">
-      <SideBar />
+      <SideBar bookmarkedTweets={bookmarkedTweets} />
 
       <div className="flex-1 bg-gray-900 p-6 max-w-3xl mx-auto">
         <CreatePost />
@@ -188,22 +181,25 @@ const Home = () => {
                       onClick={() => handleCommentToggle(index, post.tweetId)}
                     ></i>
                   )}
-                  {/* <span className="text-gray-400">{post.comments}</span> */}
                 </div>
-                {/* <div className="flex items-center space-x-4">
-                  <i className="ri-repeat-line text-gray-400"></i>
+
+                <div className="flex items-center space-x-4">
+                  <i
+                    className={`ri-bookmark-${bookmarkedTweets.some((tweet) => tweet.tweetId === post.tweetId) ? 'fill' : 'line'} text-gray-400 cursor-pointer`}
+                    onClick={() => handleBookmarkClick(post.tweetId)}
+                  ></i>
                   <span className="text-gray-400">{post.shares || "0"}</span>
-                </div> */}
+                </div>
+
                 <div className="flex items-center space-x-4">
                   <i className="ri-heart-line text-gray-400" onClick={() => likePost(post.tweetId, index)}></i>
-                  <span className="text-gray-400">{post.likeCount|| "0"}</span>
+                  <span className="text-gray-400">{post.likeCount || "0"}</span>
                 </div>
               </div>
 
               {commentsState[index].isCommenting && (
                 <div className="mt-4">
                   <div className="bg-gray-700 p-4 rounded-lg">
-                    {/* Display existing comments */}
                     {commentsState[index].replies.map((reply) => (
                       <div key={reply.id} className="mb-2">
                         <p>Username : {reply.username}</p>
@@ -254,6 +250,7 @@ const Home = () => {
           />
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

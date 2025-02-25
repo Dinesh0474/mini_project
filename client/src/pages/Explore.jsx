@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Explore = () => {
   const [query, setQuery] = useState("");
@@ -10,9 +11,9 @@ const Explore = () => {
   const [post, setPost] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
-  const [relatedPosts, setRelatedPosts] = useState([]); // State to hold posts related to clicked hashtag
+  const [relatedPosts, setRelatedPosts] = useState([]);
   const [selectedHashtag, setSelectedHashtag] = useState(null);
-
+  const navigate = useNavigate(); // Initialize the navigate function
 
   const recommendations = [
     { id: 1, name: "#luffy" },
@@ -53,6 +54,7 @@ const Explore = () => {
     }
   };
 
+  // Debouncing the search
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       fetchSuggestions(query);
@@ -76,14 +78,18 @@ const Explore = () => {
 
   // Function to handle hashtag click and filter posts based on the clicked hashtag
   const handleHashtagClick = (hashtag) => {
-    console.log("Selected Hashtag: ", hashtag);  // Debugging line
-    setSelectedHashtag(hashtag);  // Set the selected hashtag
+    console.log("Selected Hashtag: ", hashtag); // Debugging line
+    setSelectedHashtag(hashtag); // Set the selected hashtag
     const filteredPosts = post.filter((item) =>
       item.hashtags.includes(hashtag) // Filter posts by the selected hashtag
     );
     setRelatedPosts(filteredPosts); // Update the related posts
   };
-  
+
+  // Handle suggestion click and navigate to the user's profile page
+  const handleSuggestionClick = (userId) => {
+    navigate(`/userprofile/${userId}`); // Navigate to the profile page
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -91,8 +97,8 @@ const Explore = () => {
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center justify-center ml-5">
             <a href="/home" className="flex items-center">
-            {/* <FontAwesomeIcon icon={faTwitter} style={{ color: "#ffffff" }} size="2x" /> */}
-            <h1 className="ml-2 text-white">JWorld</h1>
+              {/* <FontAwesomeIcon icon={faTwitter} style={{ color: "#ffffff" }} size="2x" /> */}
+              <h1 className="ml-2 text-white">JWorld</h1>
             </a>
           </div>
 
@@ -117,6 +123,7 @@ const Explore = () => {
                           <div
                             key={suggestion.id}
                             className="bg-gray-700 p-3 text-gray-300 hover:bg-gray-600 cursor-pointer rounded-lg transition-all"
+                            onClick={() => handleSuggestionClick(suggestion.id)} // Navigate to profile on click
                           >
                             {suggestion.username}
                           </div>
@@ -139,16 +146,15 @@ const Explore = () => {
             <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-2">
               {recommendations.map((item) => (
                 <div
-                key={item.id}
-                className={`flex flex-col items-center justify-center p-4  rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer
-                  ${selectedHashtag === item.name ? 'bg-gray-500' : 'bg-gray-800'}`} // Change background color based on selectedHashtag
-                onClick={() => handleHashtagClick(item.name)}
-              >
-                <p className="mt-1 text-sm font-medium text-gray-300">
-                  {item.name}
-                </p>
-              </div>
-              
+                  key={item.id}
+                  className={`flex flex-col items-center justify-center p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer
+                    ${selectedHashtag === item.name ? 'bg-gray-500' : 'bg-gray-800'}`} // Change background color based on selectedHashtag
+                  onClick={() => handleHashtagClick(item.name)}
+                >
+                  <p className="mt-1 text-sm font-medium text-gray-300">
+                    {item.name}
+                  </p>
+                </div>
               ))}
             </div>
           </section>
@@ -219,23 +225,6 @@ const Explore = () => {
               </div>
             </div>
           )}
-          {/* <h1>Related posts</h1> */}
-          {/* {relatedPosts.length > 0 && (
-            <section className="mt-5 px-4">
-              <h3 className="text-white text-lg font-semibold">Related Posts</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                {relatedPosts.map((item) => (
-                  <img
-                    key={item.tweet_id}
-                    src={item.imagepath}
-                    alt="Related Post"
-                    className="w-full rounded-lg shadow-md cursor-pointer"
-                    onClick={() => openModal(item)}
-                  />
-                ))}
-              </div>
-            </section>
-          )} */}
         </div>
       </main>
     </div>
