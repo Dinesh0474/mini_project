@@ -13,8 +13,8 @@ RUN npm install
 # Copy the entire frontend code into the container
 COPY . .
 
-# Expose the port that your app will run on (for example 5173 for Vite)
+# Expose the port that your app will run on (for example, 5173 for Vite)
 EXPOSE 5173
 
-# Run the app using vite
-CMD ["npm", "run", "dev"]
+# Run the app using vite and expose it to all interfaces
+CMD ["npm", "run", "dev", "--", "--host"]

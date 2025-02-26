@@ -4,6 +4,7 @@ import SideBar from "../components/SideBar";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [posts, setPost] = useState([]);
@@ -11,6 +12,17 @@ const Home = () => {
   const [like, setLike] = useState(0);
   const user_id = localStorage.getItem("user_id");
   const [bookmarkedTweets, setBookmarkedTweets] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('token');
+   
+    if (!token) {
+      // Redirect to login page if token is not found
+      navigate('/');
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const getPostsAndBookmarks = async () => {

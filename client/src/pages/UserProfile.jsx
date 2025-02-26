@@ -12,6 +12,16 @@ function TwitterProfile() {
   const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('token');
+   
+    if (!token) {
+      // Redirect to login page if token is not found
+      navigate('/');
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     if (token) {
       // Fetch profile data
       fetch(`http://localhost:3000/profiles/${userId}`, {
@@ -86,12 +96,12 @@ function TwitterProfile() {
         <div className="relative">
           {/* Cover Image */}
           <div className="h-48 bg-gray-700 rounded-lg overflow-hidden">
-            <div className="w-full h-full bg-[url(src/assets/banner.jpg)]"></div>
+            <div className="w-full h-full bg-[url(/src/assets/banner.jpg)]"></div>
           </div>
           {/* Profile Image */}
           <div className="absolute top-32 left-4">
             <img
-              src="src/assets/profile.jpg"
+              src="/src/assets/profile.jpg"
               alt="Profile"
               className="w-24 h-24 rounded-full border-4 border-gray-900"
             />
@@ -131,7 +141,7 @@ function TwitterProfile() {
         {profile.posts?.map(post => (
           <div key={post.id} className="bg-gray-800 rounded-lg p-4 mb-6">
             <div className="flex items-center">
-              <img src="src/assets/profile.jpg" alt="Profile" className="w-12 h-12 rounded-full" />
+              <img src="/src/assets/profile.jpg" alt="Profile" className="w-12 h-12 rounded-full" />
               <div className="ml-4">
                 <p className="text-sm">{post.text}</p>
                 <p className="text-sm text-blue-500 mt-1">{post.hashtags.join(" ")}</p>

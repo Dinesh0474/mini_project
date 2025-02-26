@@ -9,7 +9,17 @@ const BookmarksPage = () => {
   const userId = localStorage.getItem("user_id");
   console.log(userId);
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('token');
+   
+    if (!token) {
+      // Redirect to login page if token is not found
+      navigate('/');
+    }
+  }, [navigate]);
  
   useEffect(() => {
     // Fetch bookmarks for the user
@@ -64,7 +74,7 @@ const BookmarksPage = () => {
       {loading ? (
         <p className="text-center text-xl">Loading...</p> // Show loading text while data is being fetched
       ) : error ? (
-        <p className="text-center text-xl text-red-500">{error}</p> // Display error message if something went wrong
+        <p className="text-center text-xl text-red-500">No posts bookmarked yet!</p> // Display error message if something went wrong
       ) : bookmarkedTweets.length === 0 ? (
         <p className="text-center text-xl">No posts bookmarked yet!</p> // Handle case where there are no bookmarks
       ) : (

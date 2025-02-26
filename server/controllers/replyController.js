@@ -21,7 +21,13 @@ exports.getRepliesByTweet = async (req, res) => {
   const { tweetId } = req.params;
 
   try {
-    const result = await pool.query('SELECT * FROM "Reply" WHERE tweetId = $1', [tweetId]);
+    const result = await pool.query(`
+      SELECT r.*, p.username
+      FROM "Reply" r
+      JOIN "Profile" p ON r.userId = p.id
+      WHERE r.tweetId = $1
+    `, [tweetId]);
+
     res.status(200).json(result.rows);
   } catch (error) {
     console.error(error);

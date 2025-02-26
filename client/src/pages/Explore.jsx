@@ -19,11 +19,23 @@ const Explore = () => {
   const [selectedHashtag, setSelectedHashtag] = useState(null);
   const navigate = useNavigate(); // Initialize the navigate function
 
+  useEffect(() => {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('token');
+   
+    if (!token) {
+      // Redirect to login page if token is not found
+      navigate('/');
+    }
+  }, [navigate]);
+
   const recommendations = [
-    { id: 1, name: "#luffy" },
-    { id: 2, name: "#zoro" },
-    { id: 3, name: "#Sanji" },
-    { id: 4, name: "#react" },
+    { id: 1, name: "#tech" },
+    { id: 2, name: "#movie" },
+    { id: 3, name: "#sports" },
+    { id: 4, name: "#bio" },
+    { id: 5, name: "#gaming" },
+    { id: 6, name: "#music" }
   ];
 
   // Fetch posts from API

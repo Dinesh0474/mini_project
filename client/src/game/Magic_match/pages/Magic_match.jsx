@@ -27,6 +27,16 @@ const MagicMatch = () => {
   const [gameOver, setGameOver] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Check if there's a token in localStorage
+    const token = localStorage.getItem('token');
+   
+    if (!token) {
+      // Redirect to login page if token is not found
+      navigate('/');
+    }
+  }, [navigate]);
+
   const shuffleCards = () => {
     // Step 1: Duplicate the cards array
     const duplicatedCards = [...cardImages, ...cardImages];

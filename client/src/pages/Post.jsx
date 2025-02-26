@@ -19,7 +19,7 @@ console.log(user_id);
     
     if (!token) {
       // Redirect to login page if token is not found
-      navigate('/login');
+      navigate('/');
     }
   }, [navigate]);
 

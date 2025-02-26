@@ -8,26 +8,46 @@ services:
     container_name: backend-container
     working_dir: /usr/src/app
     ports:
-      - "3000:3000"  
-    #   - ./server:/usr/src/app
+      - "3000:3000"
     environment:
       - NODE_ENV=development
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=1234
+      - DATABASE_URL=postgresql://postgres:1234@postgres:5432/postgres
     command: ["npm", "start"]
+    depends_on:
+      - postgres
 
   frontend:
     build:
-      context: ./client 
+      context: ./client
       dockerfile: Dockerfile
     container_name: frontend-container
     working_dir: /usr/src/app
     ports:
-      - "5174:5173"  
-    # volumes:
-    #   - ./client:/usr/src/app
+      - "5173:5173"
     environment:
       - NODE_ENV=development
     command: ["npm", "run", "dev"]
 
+  postgres:
+    image: postgres:13 # You can change the version if needed
+    container_name: postgres-container
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"  # Exposes PostgreSQL port for external access
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persists data between container restarts
+
 networks:
   default:
     driver: bridge
+
+volumes:
+  postgres_data: # Persistent volume for PostgreSQL data

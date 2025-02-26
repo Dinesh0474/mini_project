@@ -23,6 +23,14 @@ function TwitterProfile() {
   const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
+   
+    if (!token) {
+      // Redirect to login page if token is not found
+      navigate('/');
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     // Load followed users from local storage
     const followed = JSON.parse(localStorage.getItem('followedUsers')) || [];
     setFollowedUsers(new Set(followed));
