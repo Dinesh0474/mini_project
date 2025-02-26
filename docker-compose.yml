@@ -3,28 +3,27 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./server  # Path to the backend directory (adjust as needed)
+      context: ./server
       dockerfile: Dockerfile
     container_name: backend-container
     working_dir: /usr/src/app
     ports:
-      - "3000:3000"  # Expose backend port
-    volumes:
-      - ./server:/usr/src/app
+      - "3000:3000"  
+    #   - ./server:/usr/src/app
     environment:
       - NODE_ENV=development
     command: ["npm", "start"]
 
   frontend:
     build:
-      context: ./client  # Path to the frontend directory (adjust as needed)
+      context: ./client 
       dockerfile: Dockerfile
     container_name: frontend-container
     working_dir: /usr/src/app
     ports:
-      - "5174:5173"  # Expose frontend port (default Vite port)
-    volumes:
-      - ./client:/usr/src/app
+      - "5174:5173"  
+    # volumes:
+    #   - ./client:/usr/src/app
     environment:
       - NODE_ENV=development
     command: ["npm", "run", "dev"]

@@ -10,8 +10,7 @@ const replyRoutes = require('./routes/replyRoutes');
 const likeRoutes = require('./routes/likeRoutes');
 const bookmarkRoutes = require('./routes/bookmarkRoutes');
 const followRoutes = require('./routes/followRoutes'); 
-const { default: authRouter } = require('./routes/authRoutes');
-
+const authRouter = require('./routes/authRoutes'); // Corrected the import for authRouter
 
 // Load environment variables
 dotenv.config();
@@ -25,7 +24,6 @@ setupSchema().then(() => {
   app.use(cors({
     origin: 'http://localhost:5173', // Allow only this domain
   }));
-  
 
   // Routes
   app.use('/profiles', profileRoutes);
@@ -34,9 +32,7 @@ setupSchema().then(() => {
   app.use('/likes', likeRoutes);
   app.use('/bookmarks', bookmarkRoutes);
   app.use('/follows', followRoutes);
-  app.use('/auth', authRouter)
- 
-
+  app.use('/auth', authRouter);  // Ensure authRouter is used correctly
 
   // Default route
   app.get('/', (req, res) => {

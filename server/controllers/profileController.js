@@ -1,4 +1,6 @@
-const pool = require('../models/db');
+  
+  
+  const pool = require('../models/db');
 
 // Create a profile
 exports.createProfile = async (req, res) => {

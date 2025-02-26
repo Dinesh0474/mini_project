@@ -1,6 +1,7 @@
-const jwt = require('jsonwebtoken');
-import pool from '../models/db.js';
- 
+const jwt = require("jsonwebtoken");
+const pool = require('../models/db'); // update to correct relative path
+
+
 const validateToken = async (req, res, next) => {
   try {
     let token;
@@ -41,4 +42,4 @@ const validateToken = async (req, res, next) => {
   }
 };
  
-export default validateToken;
+module.exports = validateToken;
